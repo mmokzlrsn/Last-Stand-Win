@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     private float speed = 1.0f;
     private Rigidbody enemyRB;
     private GameObject player;
-    private float fallRange = -15.0f;
+    private float fallRange = -9.0f;
 
     void Start()
     {

@@ -24,20 +24,36 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Move();
+        PowerUpDisplay();
+    }
+
+    void Move()
+    {
         float forwardInput = Input.GetAxis("Vertical");
         playerRB.AddForce(centerPoint.transform.forward * forwardInput * speed);
-        powerUpIndicatior.transform.position = transform.position + powerUpIndicatiorPos;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("PowerUp"))
         {
-            hasPowerUp = true;
-            powerUpIndicatior.gameObject.SetActive(true);
-            Destroy(other.gameObject);            
-            StartCoroutine(PowerupCountdownRoutine());
+            powerUp(other);
         }
+    }
+
+    void powerUp(Collider other)
+    {
+        hasPowerUp = true;
+        powerUpIndicatior.gameObject.SetActive(true);
+        Destroy(other.gameObject);
+        StartCoroutine(PowerupCountdownRoutine());
+    }
+
+
+    void PowerUpDisplay()
+    {
+        powerUpIndicatior.transform.position = transform.position + powerUpIndicatiorPos;
     }
 
     IEnumerator PowerupCountdownRoutine()
@@ -52,11 +68,16 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Enemy") & hasPowerUp)
         {
-            Rigidbody enemyRB = collision.gameObject.GetComponent<Rigidbody>();
-            Vector3 awayFromPlayer = collision.gameObject.transform.position - transform.position;
-
-            enemyRB.AddForce(awayFromPlayer * powerUpStrength, ForceMode.Impulse);
+            powerUpPush(collision);
         
         }
+    }
+
+    void powerUpPush(Collision collision)
+    {
+        Rigidbody enemyRB = collision.gameObject.GetComponent<Rigidbody>();
+        Vector3 awayFromPlayer = collision.gameObject.transform.position - transform.position;
+
+        enemyRB.AddForce(awayFromPlayer * powerUpStrength, ForceMode.Impulse);
     }
 }
